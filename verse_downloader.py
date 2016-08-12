@@ -10,11 +10,12 @@ import importlib
 class VerseDownloader:
     """VerseDownloader main class."""
     def __init__(self):
-        self._item = ""
         self._translations = [] #list with tuples: (module, class name)
         self.header = "=====================Narzędzie do pobierania wersetów======================="
         #names to ignore during searching translations:
         self._wrong_names = ["bible.py", "verse_downloader.py"]
+        self._errors = []
+        self._selected = None
 
     def run(self):
         """Running menu."""
@@ -25,21 +26,29 @@ class VerseDownloader:
     def _clear():
         os.system("cls")
 
+    def _print_errors(self):
+        if self._errors:
+            print("\n\nUwaga! Wystąpiły następujące błędy w trakcie działania programu:")
+            i = 1
+            for error in self._errors:
+                print("{0}. {1}\n".format(i, error))
+                i += 1
+
     def _start_screen(self):
-        #self._clear()
+        self._clear()
         print(self.header)
         print("Menu:")
         print("1. Pobieranie wersetów")
         print("2. Pomoc")
         print("3. Wyjście")
+        self._print_errors()
         option = input("Wybierz opcję:\n")
         if option == "1":
-            self._item += "1"
             self._translations_screen()
         elif option == "2":
-            self._item += "2"
+            pass
         elif option == "3":
-            self._item += "3"
+            pass
         else:
             print("Wybrano błędną opcję. Wybierz 1, 2 lub 3.")
 
@@ -54,19 +63,57 @@ class VerseDownloader:
         translations = [fname for fname in os.listdir() if re.match(pattern, fname)]
         translations = list(set(translations) - set(self._wrong_names))
         for translation in translations:
-            self._translations.append((importlib.import_module(translation[:-3]),
-                                       get_name(translation)))
+            try:
+                self._translations.append((importlib.import_module(translation[:-3]),
+                                           get_name(translation)))
+            except (SyntaxError, ImportError) as error:
+                self._errors.append("Błąd w pliku: {0}\n{1}".format(translation,
+                                                                    error))
 
     def _translations_screen(self):
         self._clear()
         i = 1
+        translations = {} #dictionary with bible objects
         print(self.header)
         print("Dostępne wersje biblii:")
         for trans in self._translations:
-            (module, classname) = trans
-            tmp = getattr(module, classname)("")
-            line = "{0}. {1} (źródło: {2})".format(i, tmp.name, tmp.main_path)
+            try:
+                (module, classname) = trans
+                tmp = getattr(module, classname)("")
+                translations[i] = tmp
+                line = "{0}. {1} (źródło: {2})".format(i, tmp.name, tmp.main_path)
+            except AttributeError as error:
+                line = "{0}. Błąd podczas wczytywania przekładu.".format(i)
+                self._errors.append("Błąd podczas wczytywania przekładu" +
+                                    " - błędna nazwa obiektu do utworzenia.\n {0}"
+                                    .format(error))
             print(line)
             i += 1
-        print("\n")
+        self._print_errors()
         version = input("Wybierz właściwą opcję i naciśnij enter.\n")
+        try:
+            self._selected = translations[int(version)]
+            self._bible_screen()
+        except (KeyError, ValueError):
+            input("Wybrano błędny przekład. Wciśnij enter aby wybierać ponownie.")
+            self._translations_screen()
+
+    #TODO: Add error handling to these two functions
+    def _bible_screen(self):
+        self._clear()
+        print(self.header)
+        print("Wybrany przekład: {0}".format(self._selected.name))
+        self._print_errors()
+        self._selected.desc = input("Wprowadź wersety do pobrania: ")
+        self._selected.get()
+        self._verses_screen()
+
+    def _verses_screen(self):
+        self._clear()
+        print(self.header)
+        print("Wybrany przekład: {0}".format(self._selected.name))
+        print(self._selected)
+        self._print_errors()
+
+down = VerseDownloader()
+down.run()

@@ -3,7 +3,7 @@
 #Verse Downloader Project
 #Author: Piotr Maślankowski, pmaslankowski@gmail.com
 
-"""Module consists Biblia Warszawska translation - implementations of Bible interface."""
+"""Module consists Biblia Warszawska translation - implementations of Bible interface.c"""
 import re
 from bible import Bible
 
