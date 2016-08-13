@@ -6,6 +6,7 @@
 import os
 import re
 import importlib
+from bible import Bible
 
 class VerseDownloader:
     """VerseDownloader main class."""
@@ -15,12 +16,19 @@ class VerseDownloader:
         #names to ignore during searching translations:
         self._wrong_names = ["bible.py", "verse_downloader.py"]
         self._errors = []
-        self._selected = None
+        self._selected = None #selected translation
+        self._is_running = True
+        self._action = self._start_screen #current screen
 
     def run(self):
         """Running menu."""
         self._load_translations()
-        self._start_screen()
+        while self._is_running:
+            self._action()
+
+    def exit(self):
+        """Close program."""
+        self._is_running = False
 
     @staticmethod
     def _clear():
@@ -44,13 +52,13 @@ class VerseDownloader:
         self._print_errors()
         option = input("Wybierz opcję:\n")
         if option == "1":
-            self._translations_screen()
+            self._action = self._translations_screen
         elif option == "2":
-            pass
+            self._action = self._help_screen
         elif option == "3":
-            pass
+            self._action = self.exit
         else:
-            print("Wybrano błędną opcję. Wybierz 1, 2 lub 3.")
+            input("Wybrano błędną opcję. Wybierz 1, 2 lub 3.")
 
     def _load_translations(self):
         def get_name(fname):
@@ -85,7 +93,7 @@ class VerseDownloader:
             except AttributeError as error:
                 line = "{0}. Błąd podczas wczytywania przekładu.".format(i)
                 self._errors.append("Błąd podczas wczytywania przekładu" +
-                                    " - błędna nazwa obiektu do utworzenia.\n {0}"
+                                    " - błędna nazwa obiektu do utworzenia.\n{0}"
                                     .format(error))
             print(line)
             i += 1
@@ -93,20 +101,23 @@ class VerseDownloader:
         version = input("Wybierz właściwą opcję i naciśnij enter.\n")
         try:
             self._selected = translations[int(version)]
-            self._bible_screen()
+            self._action = self._bible_screen
         except (KeyError, ValueError):
             input("Wybrano błędny przekład. Wciśnij enter aby wybierać ponownie.")
-            self._translations_screen()
 
-    #TODO: Add error handling to these two functions
     def _bible_screen(self):
         self._clear()
         print(self.header)
         print("Wybrany przekład: {0}".format(self._selected.name))
         self._print_errors()
         self._selected.desc = input("Wprowadź wersety do pobrania: ")
-        self._selected.get()
-        self._verses_screen()
+        try:
+            self._selected.get()
+            self._action = self._verses_screen
+        except ValueError as error:
+            print("Wprowadzono błędny opis wersetów.\n{0}".format(error))
+            self._action = self._bible_screen
+            input()
 
     def _verses_screen(self):
         self._clear()
@@ -114,6 +125,18 @@ class VerseDownloader:
         print("Wybrany przekład: {0}".format(self._selected.name))
         print(self._selected)
         self._print_errors()
+        self._action = self._start_screen
+        input("Naciśnij enter aby powrócić do głównego menu.")
+
+    def _help_screen(self):
+        self._clear()
+        print(self.header)
+        print("Spis ksiąg biblijnych i ich skrótów używanych w programie:")
+        for shortcut, book in Bible.shortcuts.items():
+            print("{0} - {1}".format(shortcut, book))
+        self._print_errors()
+        self._action = self._start_screen
+        input("Naciśnij enter aby powrócić do głównego menu.")
 
 down = VerseDownloader()
 down.run()
