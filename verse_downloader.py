@@ -6,6 +6,7 @@
 import os
 import re
 import importlib
+import winsound
 
 import keyboard
 import pyperclip
@@ -158,18 +159,21 @@ class VerseDownloader:
     def _up_event(self):
         if self._selected_verse < len(self._selected):
             self._selected_verse += 1
+        else:
+            winsound.PlaySound("SystemAsterisk", winsound.SND_ALIAS | winsound.SND_ASYNC)
         print("Zaznaczony werset: {0}".format(self._selected_verse))
         self._update_clipboard()
 
     def _down_event(self):
         if self._selected_verse > 1:
             self._selected_verse -= 1
+        else:
+            winsound.PlaySound("SystemAsterisk", winsound.SND_ALIAS | winsound.SND_ASYNC)
         print("Zaznaczony werset: {0}".format(self._selected_verse))
         self._update_clipboard()
 
     def _update_clipboard(self):
         pyperclip.copy(self._selected[self._selected_verse])
-
 
 down = VerseDownloader()
 down.run()
