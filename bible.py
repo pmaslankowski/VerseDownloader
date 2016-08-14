@@ -60,6 +60,12 @@ class Bible:
             i += 1
         return result
 
+    def __len__(self):
+        return len(self.verses)
+
+    def __getitem__(self, index):
+        return self.verses[index-1]
+
     def diagnostic_print(self):
         """Print diagnostic information about object. For tests only."""
         res = ("Bible:\nDescription: {0}\nBook: {1}\nChapter: {2}\nFrom: {3}\nTo: {4}\n Path: {5}"
