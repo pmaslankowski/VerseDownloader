@@ -2,7 +2,7 @@
 #VersesDownloader Project
 #Author: Piotr Maślankowski, pmaslankowski@gmail.com
 
-"""Main program module."""
+"""Main program module - text version."""
 import os
 import re
 import importlib
@@ -19,7 +19,7 @@ class VerseDownloader:
         self.header = "=====================Narzędzie do pobierania wersetów======================="
         self._translations = [] #list with tuples: (module, class name)
         #names to ignore during searching translations:
-        self._wrong_names = ["bible.py", "verse_downloader.py"]
+        self._wrong_names = ["bible.py", "verses_downloader_text.py", "VersesDownloader.pyw"]
         self._errors = []
         self._selected = None #selected translation
         self._is_running = True
@@ -131,6 +131,7 @@ class VerseDownloader:
         print("Wybrany przekład: {0}".format(self._selected.name))
         print(self._selected)
         self._selected_verse = 1
+        print("Zaznaczony werset: {0}".format(self._selected_verse))
         self._set_hotkeys()
         self._update_clipboard()
         self._print_errors()
@@ -139,6 +140,7 @@ class VerseDownloader:
         self._clear_hotkeys()
 
     def _help_screen(self):
+        print("Zaznaczony werset: {0}".format(self._selected_verse))
         self._clear()
         print(self.header)
         print("Spis ksiąg biblijnych i ich skrótów używanych w programie:")
@@ -146,13 +148,13 @@ class VerseDownloader:
             print("{0} - {1}".format(shortcut, book))
         self._print_errors()
         self._action = self._start_screen
-        input("Naciśnij enter aby powrócić do głównego menu.e")
+        input("Naciśnij enter aby powrócić do głównego menu.")
 
     def _set_hotkeys(self):
         keyboard.add_hotkey("ctrl+up", self._up_event)
         keyboard.add_hotkey("ctrl+down", self._down_event)
 
-    def _clear_hotkeys(self):
+    def _clear_hotkeys(self): #pylint: disable=no-self-use
         keyboard.remove_hotkey("ctrl+up")
         keyboard.remove_hotkey("ctrl+down")
 
@@ -161,19 +163,20 @@ class VerseDownloader:
             self._selected_verse += 1
         else:
             winsound.PlaySound("SystemAsterisk", winsound.SND_ALIAS | winsound.SND_ASYNC)
-        print("Zaznaczony werset: {0}".format(self._selected_verse))
         self._update_clipboard()
+        print("Zaznaczony werset: {0}".format(self._selected_verse))
 
     def _down_event(self):
         if self._selected_verse > 1:
             self._selected_verse -= 1
         else:
             winsound.PlaySound("SystemAsterisk", winsound.SND_ALIAS | winsound.SND_ASYNC)
-        print("Zaznaczony werset: {0}".format(self._selected_verse))
         self._update_clipboard()
+        print("Zaznaczony werset: {0}".format(self._selected_verse))
 
     def _update_clipboard(self):
         pyperclip.copy(self._selected[self._selected_verse])
 
-down = VerseDownloader()
-down.run()
+if __name__ == "__main__":
+    downloader = VerseDownloader() #pylint: disable=C0103
+    downloader.run()

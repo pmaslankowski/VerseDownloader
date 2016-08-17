@@ -66,11 +66,19 @@ class Bible:
     def __getitem__(self, index):
         return self.verses[index-1]
 
+    def __iter__(self):
+        for verse in self.verses:
+            yield verse
+
     def diagnostic_print(self):
         """Print diagnostic information about object. For tests only."""
         res = ("Bible:\nDescription: {0}\nBook: {1}\nChapter: {2}\nFrom: {3}\nTo: {4}\n Path: {5}"
                .format(self.desc, self._book, self._chapter, self._from, self._to, self._path))
         print(res)
+
+    def get_from(self):
+        """Return starting verse index."""
+        return int(self._from) if self._from is not None else 1
 
     def _download(self):
         """Download page with bible verses"""
