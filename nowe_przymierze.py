@@ -17,9 +17,10 @@ class NowePrzymierze(Bible):
              "Rz": "Rzymian", "1 Kor": "1.%20Koryntian", "2 Kor": "2.%20Koryntian",
              "Ga": "Galacjan", "Ef": "Efezjan", "Flp": "Filipian", "Kol": "Kolosan",
              "1 Tes": "1.%20Tesaloniczan", "2 Tes": "2.%20Tesaloniczan", "1 Tm": "1.%20Tymoteusza",
-             "2 Tm": "2.%20Tymoteusza", "Tt": "Tytusa", "Flm": "Filemona", "Hbr": "Hebrajczyków",
-             "Jk": "Jakuba", "1 P": "1.%20Piotra", "2 P": "2.%20Piotra", "1 J": "1.%20Jana",
-             "2 J": "2.%20Jana", "3 J": "3.%20Jana", "Jud": "Judy", "Ap": "Objawienie"}
+             "2 Tm": "2.%20Tymoteusza", "Tt": "Tytusa", "Flm": "Filemona",
+             "Hbr": "Hebrajczyk%C3%B3w", "Jk": "Jakuba", "1 P": "1.%20Piotra",
+             "2 P": "2.%20Piotra", "1 J": "1.%20Jana", "2 J": "2.%20Jana",
+             "3 J": "3.%20Jana", "Jud": "Judy", "Ap": "Objawienie"}
 
     def __init__(self, desc):
         self.main_path = r"http://www.biblegateway.com"
