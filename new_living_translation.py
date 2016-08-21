@@ -1,17 +1,17 @@
-#NewInternationalVersion
+#NewLivingTranslation
 #-*- coding: utf8 -*-
 #Verse Downloader Project
 #Author: Piotr Maślankowski, pmaslankowski@gmail.com
 
-"""Module consists New International Version - implementations of Bible interface."""
+"""Module consists New Living Translation - implementations of Bible interface."""
 import re
 from bs4 import BeautifulSoup
 from bible import Bible
 
 
 
-class NewInternationalVersion(Bible):
-    """NewInternationalVersion class."""
+class NewLivingTranslation(Bible):
+    """NewLivingTranslation class."""
 
     books = {"Rdz": "Genesis", "Wj": "Exodus", "Kpł": "Levicitus", "Lb": "Numbers",
              "Pwt": "Deuteronomy", "Joz": "Joshua", "Sdz": "Judges", "Rt": "Ruth",
@@ -33,12 +33,12 @@ class NewInternationalVersion(Bible):
 
     def __init__(self, desc):
         self.main_path = r"http://www.biblegateway.com"
-        self.name = "New International Version"
+        self.name = "New Living Translation"
         super().__init__(desc)
 
     def _build_path(self):
-        book_name = NewInternationalVersion.books[self._book]
-        self._path = ("{0}/passage/?search={1}+{2}&version=NIV"
+        book_name = NewLivingTranslation.books[self._book]
+        self._path = ("{0}/passage/?search={1}+{2}&version=NLT"
                       .format(self.main_path, book_name, self._chapter))
 
     def _parse(self):
@@ -51,4 +51,4 @@ class NewInternationalVersion(Bible):
         #removing empty lines:
         self.verses = tmp[1:-4]
         #removing copyright text:
-        self.verses[-1] = self.verses[-1][:-56]
+        self.verses[-1] = self.verses[-1][:-47]

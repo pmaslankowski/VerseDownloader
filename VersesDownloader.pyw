@@ -11,6 +11,7 @@ import re
 import importlib
 from time import strftime
 from urllib import error as urlerror
+import bible
 import winsound
 import pyperclip
 import keyboard
@@ -28,9 +29,10 @@ class Application:
         self._bible = None
         self._build_layout(master)
         self._load_translations()
+        #self._write_help()
 
     def _build_layout(self, master):
-        master.minsize(width=500, height=600)
+        master.minsize(width=650, height=600)
         master.wm_title("VersesDownloader")
 
         main_frame = Tk.Frame(master)
@@ -46,11 +48,11 @@ class Application:
         Tk.Label(input_frame, text="Wersety:").grid(row=0, sticky="W")
         Tk.Label(input_frame, text="Tłumaczenie:").grid(row=1, sticky="W", pady=10)
 
-        self._verses_entry = Tk.Entry(input_frame, width="48", justify="center")
+        self._verses_entry = Tk.Entry(input_frame, width="70", justify="center")
         self._verses_entry.grid(row=0, column=1, padx=(10, 0))
         self._verses_entry.focus_set()
 
-        self._translation_combo = Ttk.Combobox(input_frame, state="readonly", width="45")
+        self._translation_combo = Ttk.Combobox(input_frame, state="readonly", width="67")
         self._translation_combo.grid(row=1, column=1, padx=(10, 0), pady=10)
         self._translation_combo["exportselection"] = False
         #remove focus after selecting item: (a bit tricky)
@@ -76,7 +78,7 @@ class Application:
         self._down_button.image = down_arrow
         self._down_button.grid(row=0, column=1)
 
-        self._verses_text = Tk.Text(verses_frame, state="disabled", width=48, wrap=Tk.WORD)
+        self._verses_text = Tk.Text(verses_frame, state="disabled", width=66, wrap=Tk.WORD)
         self._verses_text.grid(row=1, column=0, columnspan=2, pady=5)
 
         self._verses_text.tag_configure("desc",
@@ -90,12 +92,49 @@ class Application:
                                         spacing1=7,
                                         lmargin2="20")
         self._verses_text.tag_configure("selected",
-                                        font="Arial 10 underline",
+                                        font="Arial 10 bold",
                                         foreground="green")
         self._verses_text.tag_configure("source",
                                         font="Arial 9 italic",
                                         justify="right",
                                         rmargin=5)
+        self._verses_text.tag_configure("help_header",
+                                        font="Arial 13 italic",
+                                        justify="center",
+                                        spacing1=5,
+                                        spacing3=10)
+        self._verses_text.tag_configure("help_shortcut_old",
+                                        font="Arial 9 bold",
+                                        justify="left")
+        self._verses_text.tag_configure("help_text_old",
+                                        font="Arial 9",
+                                        justify="left")
+        self._verses_text.tag_configure("help_shortcut_new",
+                                        font="Arial 9 bold",
+                                        justify="right")
+        self._verses_text.tag_configure("help_text_new",
+                                        font="Arial 9",
+                                        justify="right")
+
+    def _write_help(self):
+        def _fill(shortcut_old, book_old, spaces):
+            return (spaces - len(shortcut_old + " - " + book_old)) * " "
+
+        self._verses_text.configure(state="normal")
+        self._verses_text.delete("1.0", "end")
+        self._verses_text.insert("end", "Spis ksiąg i skrótów:\n", "help_header")
+        for item in zip(bible.Bible.old, bible.Bible.new):
+            ((shortcut_old, book_old), (shortcut_new, book_new)) = item
+            self._verses_text.insert("end", "{0}".format(shortcut_old),
+                                     "help_text_old")
+            self._verses_text.insert("end", " - {0}".format(book_old),
+                                     "help_text_old")
+            self._verses_text.insert("end", _fill(shortcut_old, book_old, 40))
+            self._verses_text.insert("end", "{0}".format(shortcut_new),
+                                     "help_text_new")
+            self._verses_text.insert("end", " - {0}\n".format(book_new),
+                                     "help_text_new")
+        self._verses_text.configure(state="disabled")
 
     def _append_to_errors(self, msg): #pylint: disable=no-self-use
         with open("errorlog.txt", "a") as tmp:
@@ -112,6 +151,7 @@ class Application:
         pattern = r"^(?P<name>[A-Za-z_]+)\.py"
         translations = [fname for fname in os.listdir() if re.match(pattern, fname)]
         translations = list(set(translations) - set(self._wrong_names))
+        translations.sort()
         labels = [] #values to show in combobox
         i = 0
         for translation in translations:
