@@ -2,7 +2,24 @@
 #VersesDownloader Project
 #Author: Piotr Maślankowski, pmaslankowski@gmail.com
 
-"""Main program module - graphical version."""
+"""
+Main program module - graphical version.
+List of functions in this module:
+   - __init__(self, master)
+   - _build_layout(self, master)
+   - _write_help(self)
+   - _append_to_errors(self)
+   - _load_translations(self)
+   - _download_verses(self)
+   - _update_text(self)
+   - _set_hotkeys(self)
+   - _clear_hotkeys(self)
+   - _up_event(self)
+   - _down_event(self)
+   - _update_clipboard()
+If this file is executed (not imported), it shows VersesDownloader main window.
+"""
+
 import tkinter as Tk
 import tkinter.ttk as Ttk
 from tkinter import messagebox
@@ -19,8 +36,12 @@ import keyboard
 #pylint: disable=too-many-instance-attributes
 #pylint: disable=too-few-public-methods
 class Application:
-    """Main application class."""
+    """Main application class. """
     def __init__(self, master):
+        """
+        Function starts program, builds its layout and print help page.
+        Function takes one argument: master - root of window widgets tree.
+        """
         self._translations = {} #dictionary with translation objects
         #names to ignore during searching translations:
         self._wrong_names = ["bible.py", "verses_downloader_text.py", "VersesDownloader.pyw"]
@@ -29,9 +50,13 @@ class Application:
         self._bible = None
         self._build_layout(master)
         self._load_translations()
-        #self._write_help()
+        self._write_help()
 
     def _build_layout(self, master):
+        """
+        Function build main window layout.
+        In second part, function defines tags in _verses_text.
+        """
         master.minsize(width=650, height=600)
         master.wm_title("VersesDownloader")
 
@@ -117,7 +142,14 @@ class Application:
                                         justify="right")
 
     def _write_help(self):
+        """Function prints help in _verses_text"""
         def _fill(shortcut_old, book_old, spaces):
+            #removing polish characters to calculate proper length of strings:
+            aux = {"ą": "a", "ę": "e", "ż":"z", "ź":"z", "ć":"c",
+                   "ó": "o", "ń":"n", "ś":"s", "ł":"l"}
+            for char, replacement in aux.items():
+                shortcut_old = shortcut_old.replace(char, replacement)
+                book_old = book_old.replace(char, replacement)
             return (spaces - len(shortcut_old + " - " + book_old)) * " "
 
         self._verses_text.configure(state="normal")
@@ -130,6 +162,7 @@ class Application:
             self._verses_text.insert("end", " - {0}".format(book_old),
                                      "help_text_old")
             self._verses_text.insert("end", _fill(shortcut_old, book_old, 40))
+            print(len(_fill(shortcut_old, book_old, 40)))
             self._verses_text.insert("end", "{0}".format(shortcut_new),
                                      "help_text_new")
             self._verses_text.insert("end", " - {0}\n".format(book_new),
@@ -137,14 +170,26 @@ class Application:
         self._verses_text.configure(state="disabled")
 
     def _append_to_errors(self, msg): #pylint: disable=no-self-use
+        """
+        Function appends error to errorlog.txt
+        msg is message to save.
+        """
         with open("errorlog.txt", "a") as tmp:
             error = "{0}\n{1}\n".format(strftime("%Y-%m-%d %H:%M:%S"), msg)
             tmp.write(error)
 
     def _load_translations(self):
+        """
+        Function loads available translations from program folder.
+        Available translations are other .py files excluding _wrong_names in
+        program directory.
+        """
         def get_name(fname):
-            """Function gets object name from file.
-               Object name is commented in first line of module file."""
+            """
+            Function gets object name from file.
+            Object name is commented in first line of module file.
+            fname - name of file
+            """
             with open(fname, encoding="utf-8") as tmp:
                 return tmp.readline()[1:].strip()
 
@@ -174,6 +219,12 @@ class Application:
             self._translation_combo.current(0)
 
     def _download_verses(self, event=None): #pylint: disable=W0613
+        """
+        Function downloads selected verses, set hotkeys (ctrl + up, ctrl + down)
+        and copy first verse to clipboard.
+        Event argument is unused. It was added just to satisfy formal definition
+        -this function is called when a download button is pressed.
+        """
         try:
             self._bible = self._translations[int(self._translation_combo.current())]
             self._bible.desc = self._verses_entry.get()
@@ -191,6 +242,10 @@ class Application:
             self._verses_text.configure(state="disabled")
 
     def _update_text(self):
+        """
+        Function updates text in _verses_text.
+        It removes whole old content and add new one (from _bible)
+        """
         self._verses_text.configure(state="normal")
         self._verses_text.delete("1.0", "end")
         i = self._bible.get_from()
@@ -209,14 +264,24 @@ class Application:
         self._verses_text.configure(state="disabled")
 
     def _set_hotkeys(self):
+        """
+        Function sets global hotkeys:
+        -ctrl+up calls _up_event
+        -ctrl+down calls _down_event
+        """
         keyboard.add_hotkey("ctrl+up", self._down_event)
         keyboard.add_hotkey("ctrl+down", self._up_event)
 
     def _clear_hotkeys(self): #pylint: disable=no-self-use
+        """Function disable hotkeys"""
         keyboard.remove_hotkey("ctrl+up")
         keyboard.remove_hotkey("ctrl+down")
 
     def _up_event(self):
+        """
+        Function changes selected verse to upper one.
+        If change is impossible, then info sound is played.
+        """
         if self._selected_index < len(self._bible) + self._bible.get_from() - 1:
             self._selected_index += 1
             self._update_clipboard()
@@ -225,6 +290,10 @@ class Application:
             winsound.PlaySound("SystemAsterisk", winsound.SND_ALIAS | winsound.SND_ASYNC)
 
     def _down_event(self):
+        """
+        Function changes selected verse do lower one.
+        If change is impossible, then info sound is played.
+        """
         if self._selected_index > self._bible.get_from():
             self._selected_index -= 1
             self._update_clipboard()
@@ -233,6 +302,7 @@ class Application:
             winsound.PlaySound("SystemAsterisk", winsound.SND_ALIAS | winsound.SND_ASYNC)
 
     def _update_clipboard(self):
+        """Function copy selected verse to clipboard"""
         pyperclip.copy(self._bible[self._selected_index-self._bible.get_from()+1])
 
 if __name__ == "__main__":

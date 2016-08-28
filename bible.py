@@ -2,7 +2,26 @@
 #VersesDownloader project
 #Author: Piotr Maślankowski, pmaslankowski@gmail.com
 
-"""Module with Bible Functions"""
+"""
+Bible module
+
+Bible module consists bible class - interface for loading bible translations.
+To add new translation, you have to create subclass of Bible and implement following
+3 functions:
+
+- __init__(self) - constructor should set _name (of translation) and main_path - url to
+                   website from which we download verses, for example: www.bible-gateway.com
+                   Function should call constructor of superclass.
+- _build_path(self) - function should set _path attribute. From given bible book and chapter,
+                      function has to assign url with verses to _path, for example:
+                      https://www.biblegateway.com/passage/?search=1.%20Koryntian+13&version=NP
+- _parse(self) - function should parse downloaded site. Function has to extract verses from _page
+                 and assign list of verses to verses.
+
+All these functions doesn't return any value - they base on side effects.
+If one isn't implemented, AttributeError exception is thrown.
+Look at documentation to find template class with translation.
+"""
 #pylint: disable=too-many-instance-attributes
 #(i think 8 is reasonable in this case)
 
@@ -10,8 +29,24 @@ import urllib.request
 import re
 
 class Bible:
-    """Interface for different bible translations."""
+    """
+    Interface for different bible translations.
+    Usage:
+    Create instance of subclass of this class and assign proper description to
+    _desc attribute. You can set _desc manually or pass it in constructor argument.
+    Description format:
+    [Name of book] [Number of chapter], [number - from which verse] - [number - to which verse]
+    Last two informations are optional. Multiple white characters are ignored.
+    Examples of proper descriptions:
+    1 Kor 13
+    1 Kor 13, 1
+    1 Kor 13, 2 - 10 (the same as: 1 Kor    13, 2-       10)
+    List of functions:
+    - __init__(self, desc) - constructor. desc is description to assign to _desc.
+    -
+    """
 
+    #information about used shortcuts:
     old = [("Rdz", "Księga Rodzaju"), ("Wj", "Księga Wyjścia"), ("Kpł", "Księga Kapłańska"),
            ("Lb", "Księga Liczb"), ("Pwt", "Księga Powtórzonego Prawa"),
            ("Joz", "Księga Jozuego"), ("Sdz", "Księga Sędziów"), ("Rt", "Księga Rut"),
@@ -48,6 +83,10 @@ class Bible:
            ("Jud", "List św. Judy"), ("Ap", "Apokalipsa św. Jana")]
 
     def __init__(self, desc):
+        """
+        Standard constructor.
+        desc - description of verses.
+        """
         self.desc = desc
         self._page = ""
         self._path = ""
@@ -86,14 +125,21 @@ class Bible:
         return int(self._from) if self._from is not None else 1
 
     def _download(self):
-        """Download page with bible verses"""
+        """
+        Download page with bible verses.
+        Function raises ValueError if _path is empty.
+        """
         if self._path != "":
             self._page = urllib.request.urlopen(self._path).read().decode("utf-8")
         else:
             raise ValueError("Empty download path.")
 
     def _parse_desc(self):
-        """Parse verses description"""
+        """
+        Parse verses description.
+        Function sets _book, _chapter, _from and _to from description.
+        If descriptions doesn't match pattern, ValueError is raised.
+        """
         #i feel like a hacker:
         #pylint: disable=line-too-long
         pattern = r"^\s*(?P<book>([0-3]\s)?[A-Za-z]+)\s+(?P<chapter>[0-9]+)\s*(,\s+(?P<from>[0-9]+)\s*-?\s*(?P<to>[0-9]+)?)?\s*$"
@@ -106,15 +152,25 @@ class Bible:
         self._to = parse_result.group("to")
 
     def _build_path(self): #pylint: disable=no-self-use
-        """Build web url to get actual verses"""
+        """
+        Build web url to get actual verses.
+        This is necessary to implement it in subclass!
+        """
         raise AttributeError("Lack of building path function for this translation.")
 
     def _parse(self): #pylint: disable=no-self-use
-        """Parse verses from page"""
+        """
+        Parse verses from page.
+        This is necessary to implement it in subclass!
+        """
         raise AttributeError("Lack of parse function for this bible translation.")
 
     def get(self):
-        """Get Bible verses given by desc"""
+        """
+        Get Bible verses given by desc.
+        Function assign list of verses to verses variable.
+        If verses cannot be found, ValueError is raised.
+        """
         def to_index(attr):
             """Auxiliary function - from _to to index conversion"""
             return None if attr is None else int(attr)-1
