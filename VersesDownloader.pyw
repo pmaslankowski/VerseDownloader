@@ -47,6 +47,7 @@ class Application:
         self._wrong_names = ["bible.py", "verses_downloader_text.py", "VersesDownloader.pyw"]
         self._selected_index = 1
         self._selected_verse = ""
+        self._hotkeys_set = False
         self._bible = None
         self._build_layout(master)
         self._load_translations()
@@ -162,7 +163,6 @@ class Application:
             self._verses_text.insert("end", " - {0}".format(book_old),
                                      "help_text_old")
             self._verses_text.insert("end", _fill(shortcut_old, book_old, 40))
-            print(len(_fill(shortcut_old, book_old, 40)))
             self._verses_text.insert("end", "{0}".format(shortcut_new),
                                      "help_text_new")
             self._verses_text.insert("end", " - {0}\n".format(book_new),
@@ -231,7 +231,8 @@ class Application:
             self._bible.get()
             self._selected_index = self._bible.get_from()
             self._update_text()
-            self._set_hotkeys()
+            if not self._hotkeys_set:
+                self._set_hotkeys()
             self._update_clipboard()
         except ValueError as error:
             messagebox.showerror("Błąd", str(error))
@@ -271,11 +272,13 @@ class Application:
         """
         keyboard.add_hotkey("ctrl+up", self._down_event)
         keyboard.add_hotkey("ctrl+down", self._up_event)
+        self._hotkeys_set = True
 
     def _clear_hotkeys(self): #pylint: disable=no-self-use
         """Function disable hotkeys"""
         keyboard.remove_hotkey("ctrl+up")
         keyboard.remove_hotkey("ctrl+down")
+        self._hotkeys_set = False
 
     def _up_event(self):
         """
