@@ -130,7 +130,8 @@ class Bible:
         Function raises ValueError if _path is empty.
         """
         if self._path != "":
-            self._page = urllib.request.urlopen(self._path).read().decode("utf-8")
+            req = urllib.request.Request(self._path, headers={'User-Agent': 'Mozilla/5.0'})
+            self._page = urllib.request.urlopen(req).read().decode("utf-8")
         else:
             raise ValueError("Empty download path.")
 
