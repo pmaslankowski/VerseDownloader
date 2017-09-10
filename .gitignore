@@ -1,0 +1,5 @@
+#ignore python cache:
+__pycache__/
+
+#ignore local log file:
+errorlog.txt
