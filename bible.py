@@ -143,8 +143,9 @@ class Bible:
         """
         #i feel like a hacker:
         #pylint: disable=line-too-long
-        pattern = r"^\s*(?P<book>([0-3]\s)?[A-Za-z]+)\s+(?P<chapter>[0-9]+)\s*(,\s+(?P<from>[0-9]+)\s*-?\s*(?P<to>[0-9]+)?)?\s*$"
-        parse_result = re.match(pattern, self.desc)
+        pattern = r"^\s*(?P<book>([0-3]\s)?[^\W\d_]+)\s+(?P<chapter>[0-9]+)\s*(,\s+(?P<from>[0-9]+)\s*-?\s*(?P<to>[0-9]+)?)?\s*$"
+        regex = re.compile(pattern, re.UNICODE)
+        parse_result = regex.match(self.desc)
         if parse_result is None:
             raise ValueError("Parse error on book description.")
         self._book = parse_result.group("book")
