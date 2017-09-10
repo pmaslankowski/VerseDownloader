@@ -26,12 +26,14 @@ from tkinter import messagebox
 import os
 import re
 import importlib
+import threading
 from time import strftime
 from urllib import error as urlerror
 import bible
 import winsound
 import pyperclip
 import keyboard
+
 
 #pylint: disable=too-many-instance-attributes
 #pylint: disable=too-few-public-methods
@@ -48,6 +50,8 @@ class Application:
         self._selected_index = 1
         self._selected_verse = ""
         self._hotkeys_set = False
+        self._lock = threading.Lock()
+        self._status = Tk.StringVar()
         self._bible = None
         self._build_layout(master)
         self._load_translations()
@@ -86,12 +90,12 @@ class Application:
 
         Tk.Button(input_frame,
                   text="Pobierz",
-                  command=self._download_verses,
+                  command=self._start_downloading,
                   padx=5).grid(row=2,
                                sticky="E",
                                column=1,
                                pady=(0, 15))
-        master.bind("<Return>", self._download_verses)
+        master.bind("<Return>", self._start_downloading)
 
         verses_frame.grid_columnconfigure(0, weight=1)
         up_arrow = Tk.PhotoImage(file="img/up-arrow.gif")
@@ -141,6 +145,9 @@ class Application:
         self._verses_text.tag_configure("help_text_new",
                                         font="Arial 9",
                                         justify="right")
+
+        self._status_bar = Tk.Label(master, textvariable=self._status, bd=1, relief=Tk.SUNKEN, anchor=Tk.W)
+        self._status_bar.pack(side=Tk.BOTTOM, fill=Tk.X)
 
     def _write_help(self):
         """Function prints help in _verses_text"""
@@ -218,6 +225,14 @@ class Application:
         if len(labels) > 0:
             self._translation_combo.current(0)
 
+    def _start_downloading(self, event=None):
+        if self._lock.acquire(False):
+            worker = threading.Thread(target=self._download_verses)
+            worker.setDaemon(True)
+            worker.start()
+        else:
+            winsound.PlaySound("SystemAsterisk", winsound.SND_ALIAS | winsound.SND_ASYNC)
+
     def _download_verses(self, event=None): #pylint: disable=W0613
         """
         Function downloads selected verses, set hotkeys (ctrl + up, ctrl + down)
@@ -228,6 +243,7 @@ class Application:
         try:
             self._bible = self._translations[int(self._translation_combo.current())]
             self._bible.desc = self._verses_entry.get()
+            self._status.set("Pobieranie wersetów: {}...".format(self._bible.desc))
             self._bible.get()
             self._selected_index = self._bible.get_from()
             self._update_text()
@@ -239,8 +255,11 @@ class Application:
         except urlerror.URLError as error:
             messagebox.showerror("Błąd",
                                  "Wystąpił błąd przy łączeniu z serwerem.\n{0}".format(str(error)))
+            self._status.set("")
         finally:
             self._verses_text.configure(state="disabled")
+            self._status.set(self._bible.desc)
+            self._lock.release()
 
     def _update_text(self):
         """
