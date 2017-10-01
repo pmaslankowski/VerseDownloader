@@ -89,6 +89,14 @@ class Application:
         self._translation_combo.bind("<FocusIn>", lambda event: event.widget.master.focus_set())
 
         Tk.Button(input_frame,
+                  text="Cofnij",
+                  command=self._write_help,
+                  padx=5).grid(row=2,
+                               sticky="W",
+                               column=1,
+                               pady=(0,15))
+
+        Tk.Button(input_frame,
                   text="Pobierz",
                   command=self._start_downloading,
                   padx=5).grid(row=2,
@@ -160,6 +168,7 @@ class Application:
                 book_old = book_old.replace(char, replacement)
             return (spaces - len(shortcut_old + " - " + book_old)) * " "
 
+        self._status.set("Strona główna")
         self._verses_text.configure(state="normal")
         self._verses_text.delete("1.0", "end")
         self._verses_text.insert("end", "Spis ksiąg i skrótów:\n", "help_header")
