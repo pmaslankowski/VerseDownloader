@@ -54,12 +54,10 @@ class Bible:
            ("1 Krl", "1. Księga Królewska"), ("2 Krl", "2. Księga Królewska"),
            ("1 Krn", "1. Księga Kronik"), ("2 Krn", "2. Księga Kronik"),
            ("Ezd", "Księga Ezdrasza"), ("Ne", "Księga Nehemiasza"),
-           ("Tb", "Księga Tobiasza"), ("Jdt", "Księga Judyty"), ("Est", "Księga Estery"),
-           ("1 Mch", "1. Księga Machabejska"), ("2 Mch", "2. Księga Machabejska"),
-           ("Hi", "Księga Hioba"), ("Ps", "Księga Psalmów"), ("Prz", "Księga Przysłów"),
+           ("Est", "Księga Estery"), ("Hi", "Księga Hioba"),
+           ("Ps", "Księga Psalmów"), ("Prz", "Księga Przysłów"),
            ("Koh", "Księga Koheleta (Kaznodziei Salomona)"),
-           ("Pnp", "Pieśń nad pieśniami"), ("Mdr", "Księga Mądrości"),
-           ("Syr", "Mądrość Syracha"), ("Iz", "Księga Izajasza"),
+           ("Pnp", "Pieśń nad pieśniami"), ("Iz", "Księga Izajasza"),
            ("Jr", "Księga Jeremiasza"), ("Lm", "Lamentacje Jeremiasza"),
            ("Ez", "Księga Ezechiela"), ("Dn", "Księga Daniela"),
            ("Oz", "Księga Ozeasza"), ("Jl", "Księga Joela"), ("Am", "Księga Amosa"),
@@ -143,7 +141,7 @@ class Bible:
         """
         #i feel like a hacker:
         #pylint: disable=line-too-long
-        pattern = r"^\s*(?P<book>([0-3]\s)?[^\W\d_]+)\s+(?P<chapter>[0-9]+)\s*(,\s+(?P<from>[0-9]+)\s*-?\s*(?P<to>[0-9]+)?)?\s*$"
+        pattern = r"^\s*(?P<book>([0-3]\s)?[^\W\d_]+)\s+(?P<chapter>[0-9]+)\s*(:\s*(?P<from>[0-9]+)\s*-?\s*(?P<to>[0-9]+)?)?\s*$"
         regex = re.compile(pattern, re.UNICODE)
         parse_result = regex.match(self.desc)
         if parse_result is None:
