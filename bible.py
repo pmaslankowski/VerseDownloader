@@ -46,7 +46,7 @@ class Bible:
     -
     """
 
-    #information about used shortcuts:
+    #information about used abbrs:
     old = [("Rdz", "Księga Rodzaju"), ("Wj", "Księga Wyjścia"), ("Kpł", "Księga Kapłańska"),
            ("Lb", "Księga Liczb"), ("Pwt", "Księga Powtórzonego Prawa"),
            ("Joz", "Księga Jozuego"), ("Sdz", "Księga Sędziów"), ("Rt", "Księga Rut"),
@@ -56,7 +56,7 @@ class Bible:
            ("Ezd", "Księga Ezdrasza"), ("Ne", "Księga Nehemiasza"),
            ("Est", "Księga Estery"), ("Hi", "Księga Hioba"),
            ("Ps", "Księga Psalmów"), ("Prz", "Księga Przysłów"),
-           ("Koh", "Księga Koheleta (Kaznodziei Salomona)"),
+           ("Koh", "Księga Koheleta"),
            ("Pnp", "Pieśń nad pieśniami"), ("Iz", "Księga Izajasza"),
            ("Jr", "Księga Jeremiasza"), ("Lm", "Lamentacje Jeremiasza"),
            ("Ez", "Księga Ezechiela"), ("Dn", "Księga Daniela"),
@@ -68,9 +68,9 @@ class Bible:
 
     new = [("Mt", "Ewangelia św. Mateusza"), ("Mk", "Ewangelia św. Marka"),
            ("Łk", "Ewangelia św. Łukasza"), ("J", "Ewangelia św. Jana"),
-           ("Dz", "Dzieje apostolskie"), ("Rz", "List do Rzymian"),
+           ("Dz", "Dzieje Apostolskie"), ("Rz", "List do Rzymian"),
            ("1 Kor", "1. List do Koryntian"), ("2 Kor", "2. List do Koryntian"),
-           ("Ga", "List do Galatów"), ("Ef", "List do Efezjan"), ("Flp", "List do Filipian"),
+           ("Ga", "List do Galacjan"), ("Ef", "List do Efezjan"), ("Flp", "List do Filipian"),
            ("Kol", "List do Kolosan"), ("1 Tes", "1. List do Tesaloniczan"),
            ("2 Tes", "2. List do Tesaloniczan"), ("1 Tm", "1. List do Tymoteusza"),
            ("2 Tm", "2. List do Tymoteusza"), ("Tt", "List do Tytusa"),
