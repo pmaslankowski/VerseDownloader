@@ -42,7 +42,7 @@ class NewLivingTranslation(Bible):
                       .format(self.main_path, book_name, self._chapter))
 
     def _parse(self):
-        ast = BeautifulSoup(self._page)
+        ast = BeautifulSoup(self._page, "lxml")
         tmp = re.split("[0-9]+",
                        "".join([line.get_text() for line
                                 in ast.find("div", class_="passage-text").findAll("p")]))
