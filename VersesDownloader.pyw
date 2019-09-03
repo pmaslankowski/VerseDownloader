@@ -259,7 +259,7 @@ class Application:
         """
         try:
             self._bible = self._translations[int(self._translation_combo.current())]
-            self._bible.desc = self._verses_entry.get()
+            self._bible.desc = self._verses_entry.get().capitalize()
             self._status.set("Pobieranie wersetów: {}...".format(self._bible.desc))
             self._bible.get()
             self._selected_index = self._bible.get_from()
