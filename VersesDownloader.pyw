@@ -325,6 +325,7 @@ class Application:
             self._selected_index += 1
             self._update_clipboard()
             self._update_text()
+            self._verses_text.see(self._selected_index + 3.0)  # always show also 2 verses beneath
         else:
             winsound.PlaySound("SystemAsterisk", winsound.SND_ALIAS | winsound.SND_ASYNC)
 
@@ -337,6 +338,7 @@ class Application:
             self._selected_index -= 1
             self._update_clipboard()
             self._update_text()
+            self._verses_text.see(self._selected_index + 3.0)  # always show also 2 verses beneath
         else:
             winsound.PlaySound("SystemAsterisk", winsound.SND_ALIAS | winsound.SND_ASYNC)
 
