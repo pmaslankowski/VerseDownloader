@@ -91,5 +91,5 @@ class BibliaWarszawska(Bible):
                       .format(book_name, self._chapter))
 
     def _parse(self):
-        ast = BeautifulSoup(self._page)
+        ast = BeautifulSoup(self._page, "lxml")
         self.verses = [tmp.getText() for tmp in ast.find_all("div", id=re.compile(r"vt[0-9]+"))]

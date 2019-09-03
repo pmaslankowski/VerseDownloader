@@ -2,7 +2,7 @@ VersesDownloader
 Author: Piotr Maślankowski, pmaslankowski@gmail.com
 
 1. INSTALLATION:
-  -Application is running in Python 3 envirionment. You will need following dependencies:
+  -Application is running in Python 3 environment. You will need following dependencies:
     -pyperclip
     -keyboard
     -beautifulsoup4

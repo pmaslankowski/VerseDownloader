@@ -144,8 +144,8 @@ class VerseDownloader:
         self._clear()
         print(self.header)
         print("Spis ksiąg biblijnych i ich skrótów używanych w programie:")
-        for shortcut, book in Bible.shortcuts.items():
-            print("{0} - {1}".format(shortcut, book))
+        for abbr, book in Bible.abbrs.items():
+            print("{0} - {1}".format(abbr, book))
         self._print_errors()
         self._action = self._start_screen
         input("Naciśnij enter aby powrócić do głównego menu.")

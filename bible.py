@@ -46,7 +46,7 @@ class Bible:
     -
     """
 
-    #information about used shortcuts:
+    #information about used abbrs:
     old = [("Rdz", "Księga Rodzaju"), ("Wj", "Księga Wyjścia"), ("Kpł", "Księga Kapłańska"),
            ("Lb", "Księga Liczb"), ("Pwt", "Księga Powtórzonego Prawa"),
            ("Joz", "Księga Jozuego"), ("Sdz", "Księga Sędziów"), ("Rt", "Księga Rut"),
@@ -54,12 +54,10 @@ class Bible:
            ("1 Krl", "1. Księga Królewska"), ("2 Krl", "2. Księga Królewska"),
            ("1 Krn", "1. Księga Kronik"), ("2 Krn", "2. Księga Kronik"),
            ("Ezd", "Księga Ezdrasza"), ("Ne", "Księga Nehemiasza"),
-           ("Tb", "Księga Tobiasza"), ("Jdt", "Księga Judyty"), ("Est", "Księga Estery"),
-           ("1 Mch", "1. Księga Machabejska"), ("2 Mch", "2. Księga Machabejska"),
-           ("Hi", "Księga Hioba"), ("Ps", "Księga Psalmów"), ("Prz", "Księga Przysłów"),
-           ("Koh", "Księga Koheleta (Kaznodziei Salomona)"),
-           ("Pnp", "Pieśń nad pieśniami"), ("Mdr", "Księga Mądrości"),
-           ("Syr", "Mądrość Syracha"), ("Iz", "Księga Izajasza"),
+           ("Est", "Księga Estery"), ("Hi", "Księga Hioba"),
+           ("Ps", "Księga Psalmów"), ("Prz", "Księga Przysłów"),
+           ("Koh", "Księga Koheleta"),
+           ("Pnp", "Pieśń nad pieśniami"), ("Iz", "Księga Izajasza"),
            ("Jr", "Księga Jeremiasza"), ("Lm", "Lamentacje Jeremiasza"),
            ("Ez", "Księga Ezechiela"), ("Dn", "Księga Daniela"),
            ("Oz", "Księga Ozeasza"), ("Jl", "Księga Joela"), ("Am", "Księga Amosa"),
@@ -70,9 +68,9 @@ class Bible:
 
     new = [("Mt", "Ewangelia św. Mateusza"), ("Mk", "Ewangelia św. Marka"),
            ("Łk", "Ewangelia św. Łukasza"), ("J", "Ewangelia św. Jana"),
-           ("Dz", "Dzieje apostolskie"), ("Rz", "List do Rzymian"),
+           ("Dz", "Dzieje Apostolskie"), ("Rz", "List do Rzymian"),
            ("1 Kor", "1. List do Koryntian"), ("2 Kor", "2. List do Koryntian"),
-           ("Ga", "List do Galatów"), ("Ef", "List do Efezjan"), ("Flp", "List do Filipian"),
+           ("Ga", "List do Galacjan"), ("Ef", "List do Efezjan"), ("Flp", "List do Filipian"),
            ("Kol", "List do Kolosan"), ("1 Tes", "1. List do Tesaloniczan"),
            ("2 Tes", "2. List do Tesaloniczan"), ("1 Tm", "1. List do Tymoteusza"),
            ("2 Tm", "2. List do Tymoteusza"), ("Tt", "List do Tytusa"),
@@ -143,7 +141,7 @@ class Bible:
         """
         #i feel like a hacker:
         #pylint: disable=line-too-long
-        pattern = r"^\s*(?P<book>([0-3]\s)?[^\W\d_]+)\s+(?P<chapter>[0-9]+)\s*(,\s+(?P<from>[0-9]+)\s*-?\s*(?P<to>[0-9]+)?)?\s*$"
+        pattern = r"^\s*(?P<book>([0-3]\s)?[^\W\d_]+)\s+(?P<chapter>[0-9]+)\s*(:\s*(?P<from>[0-9]+)\s*-?\s*(?P<to>[0-9]+)?)?\s*$"
         regex = re.compile(pattern, re.UNICODE)
         parse_result = regex.match(self.desc)
         if parse_result is None:
