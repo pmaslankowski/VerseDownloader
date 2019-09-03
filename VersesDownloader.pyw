@@ -1,6 +1,6 @@
 # -*- coding: utf8 -*-
-#VersesDownloader Project
-#Author: Piotr Maślankowski, pmaslankowski@gmail.com
+# VersesDownloader Project
+# Author: Piotr Maślankowski, pmaslankowski@gmail.com
 
 """
 Main program module - graphical version.
@@ -35,17 +35,18 @@ import pyperclip
 import keyboard
 
 
-#pylint: disable=too-many-instance-attributes
-#pylint: disable=too-few-public-methods
+# pylint: disable=too-many-instance-attributes
+# pylint: disable=too-few-public-methods
 class Application:
     """Main application class. """
+
     def __init__(self, master):
         """
         Function starts program, builds its layout and print help page.
         Function takes one argument: master - root of window widgets tree.
         """
-        self._translations = {} #dictionary with translation objects
-        #names to ignore during searching translations:
+        self._translations = {}  # dictionary with translation objects
+        # names to ignore during searching translations:
         self._wrong_names = ["bible.py", "verses_downloader_text.py", "VersesDownloader.pyw"]
         self._selected_index = 1
         self._selected_verse = ""
@@ -85,7 +86,7 @@ class Application:
         self._translation_combo = Ttk.Combobox(input_frame, state="readonly", width="67")
         self._translation_combo.grid(row=1, column=1, padx=(10, 0), pady=10)
         self._translation_combo["exportselection"] = False
-        #remove focus after selecting item: (a bit tricky)
+        # remove focus after selecting item: (a bit tricky)
         self._translation_combo.bind("<FocusIn>", lambda event: event.widget.master.focus_set())
 
         Tk.Button(input_frame,
@@ -94,7 +95,7 @@ class Application:
                   padx=5).grid(row=2,
                                sticky="W",
                                column=1,
-                               pady=(0,15))
+                               pady=(0, 15))
 
         Tk.Button(input_frame,
                   text="Pobierz",
@@ -137,7 +138,7 @@ class Application:
                                         justify="right",
                                         rmargin=5)
         self._verses_text.tag_configure("help_header",
-                                        font="Arial 13 italic",
+                                        font="Arial 12 bold",
                                         justify="center",
                                         spacing1=5,
                                         spacing3=10)
@@ -159,10 +160,11 @@ class Application:
 
     def _write_help(self):
         """Function prints help in _verses_text"""
+
         def _fill(shortcut_old, book_old, spaces):
-            #removing polish characters to calculate proper length of strings:
-            aux = {"ą": "a", "ę": "e", "ż":"z", "ź":"z", "ć":"c",
-                   "ó": "o", "ń":"n", "ś":"s", "ł":"l"}
+            # removing polish characters to calculate proper length of strings:
+            aux = {"ą": "a", "ę": "e", "ż": "z", "ź": "z", "ć": "c",
+                   "ó": "o", "ń": "n", "ś": "s", "ł": "l"}
             for char, replacement in aux.items():
                 shortcut_old = shortcut_old.replace(char, replacement)
                 book_old = book_old.replace(char, replacement)
@@ -171,21 +173,26 @@ class Application:
         self._status.set("Strona główna")
         self._verses_text.configure(state="normal")
         self._verses_text.delete("1.0", "end")
-        self._verses_text.insert("end", "Spis ksiąg i skrótów:\n", "help_header")
-        for item in zip(bible.Bible.old, bible.Bible.new):
+        self._verses_text.insert("end", "Spis ksiąg i skrótów\n", "help_header")
+        for item in zip(bible.Bible.old, bible.Bible.new + [('', '') for _ in range(len(bible.Bible.old) - len(bible.Bible.new))]):
             ((shortcut_old, book_old), (shortcut_new, book_new)) = item
             self._verses_text.insert("end", "{0}".format(shortcut_old),
                                      "help_text_old")
             self._verses_text.insert("end", " - {0}".format(book_old),
                                      "help_text_old")
-            self._verses_text.insert("end", _fill(shortcut_old, book_old, 40))
-            self._verses_text.insert("end", "{0}".format(shortcut_new),
-                                     "help_text_new")
-            self._verses_text.insert("end", " - {0}\n".format(book_new),
-                                     "help_text_new")
+            self._verses_text.insert("end", _fill(shortcut_old, book_old, 45))
+
+            if book_new:
+                self._verses_text.insert("end", "{0}".format(shortcut_new),
+                                         "help_text_new")
+                self._verses_text.insert("end", " - {0}\n".format(book_new),
+                                         "help_text_new")
+            else:
+                self._verses_text.insert("end", "{0}\n".format(book_new),
+                                         "help_text_new")
         self._verses_text.configure(state="disabled")
 
-    def _append_to_errors(self, msg): #pylint: disable=no-self-use
+    def _append_to_errors(self, msg):  # pylint: disable=no-self-use
         """
         Function appends error to errorlog.txt
         msg is message to save.
@@ -200,6 +207,7 @@ class Application:
         Available translations are other .py files excluding _wrong_names in
         program directory.
         """
+
         def get_name(fname):
             """
             Function gets object name from file.
@@ -213,7 +221,7 @@ class Application:
         translations = [fname for fname in os.listdir() if re.match(pattern, fname)]
         translations = list(set(translations) - set(self._wrong_names))
         translations.sort()
-        labels = [] #values to show in combobox
+        labels = []  # values to show in combobox
         i = 0
         for translation in translations:
             try:
@@ -242,7 +250,7 @@ class Application:
         else:
             winsound.PlaySound("SystemAsterisk", winsound.SND_ALIAS | winsound.SND_ASYNC)
 
-    def _download_verses(self, event=None): #pylint: disable=W0613
+    def _download_verses(self, event=None):  # pylint: disable=W0613
         """
         Function downloads selected verses, set hotkeys (ctrl + up, ctrl + down)
         and copy first verse to clipboard.
@@ -302,7 +310,7 @@ class Application:
         keyboard.add_hotkey("ctrl+down", self._up_event)
         self._hotkeys_set = True
 
-    def _clear_hotkeys(self): #pylint: disable=no-self-use
+    def _clear_hotkeys(self):  # pylint: disable=no-self-use
         """Function disable hotkeys"""
         keyboard.remove_hotkey("ctrl+up")
         keyboard.remove_hotkey("ctrl+down")
@@ -322,7 +330,7 @@ class Application:
 
     def _down_event(self):
         """
-        Function changes selected verse do lower one.
+        Function changes selected verse to lower one.
         If change is impossible, then info sound is played.
         """
         if self._selected_index > self._bible.get_from():
@@ -334,9 +342,10 @@ class Application:
 
     def _update_clipboard(self):
         """Function copy selected verse to clipboard"""
-        pyperclip.copy(self._bible[self._selected_index-self._bible.get_from()+1])
+        pyperclip.copy(self._bible[self._selected_index - self._bible.get_from() + 1])
+
 
 if __name__ == "__main__":
-    root = Tk.Tk() #pylint: disable=C0103
-    app = Application(root) #pylint: disable=C0103
+    root = Tk.Tk()  # pylint: disable=C0103
+    app = Application(root)  # pylint: disable=C0103
     root.mainloop()
